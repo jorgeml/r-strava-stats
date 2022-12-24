@@ -84,10 +84,11 @@ cal <- get_calendar(start_date, end_date)
 
 my_acts <-
   get_activity_list(stoken, before = end_date, after = start_date) %>% compile_activities()
-my_acts$workout_type <- as.factor(my_acts$workout_type)
 
+my_acts$workout_type <- as.factor(my_acts$workout_type)
 my_acts$start_date <- as.Date(my_acts$start_date)
 my_acts$commute <- as.logical(my_acts$commute)
+my_acts$trainer <- as.logical(my_acts$trainer)
 my_acts$type <- as.factor(my_acts$type)
 
 my_cycling_acts <- my_acts %>%
@@ -104,6 +105,7 @@ workout_by_day <- my_cycling_acts %>%
     workouts = n(),
     workout_min = sum(moving_time) / 60,
     commute,
+    trainer,
     workout_type,
     type
   ) %>%
@@ -112,6 +114,7 @@ workout_by_day <- my_cycling_acts %>%
     ride_type = case_when(
       workout_type == 11 ~ "Race",
       commute == TRUE ~ "Commute",
+      trainer == TRUE ~ "Indoor",
       type == "EBikeRide" ~ "E-bike",
       TRUE ~ "Other"
     )
@@ -122,7 +125,7 @@ workout_by_day <- my_cycling_acts %>%
 workout_by_day$ride_type <-
   factor(
     workout_by_day$ride_type,
-    levels = c("Commute", "Race", "E-bike", "Other"),
+    levels = c("Commute", "Race", "Indoor", "E-bike", "Other"),
     ordered = TRUE
   )
 
@@ -139,7 +142,7 @@ cal_workout <-
         all.x = TRUE)
 
 #custom color palette
-pal <- c('#26547c', '#ef476f', '#FFBC1F', '#05C793')
+pal <- c('#26547c', "#fc5200", '#ef476f', '#FFBC1F',  '#05C793')
 
 subtitle <-
   paste0(
