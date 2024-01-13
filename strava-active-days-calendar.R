@@ -76,8 +76,8 @@ get_calendar <- function(start_date, end_date) {
 }
 
 #create date range
-start_date <- as.Date('2022-01-01')
-end_date <- as.Date('2022-12-31')
+start_date <- as.Date('2023-01-01')
+end_date <- as.Date('2023-12-31')
 
 #create calendar
 cal <- get_calendar(start_date, end_date)
@@ -101,7 +101,7 @@ totalActivities <- my_cycling_acts %>% nrow()
 #summarise workout information
 workout_by_day <- my_cycling_acts %>%
   group_by(start_date) %>%
-  summarise(
+  reframe(
     workouts = n(),
     workout_min = sum(moving_time) / 60,
     commute,
@@ -131,7 +131,7 @@ workout_by_day$ride_type <-
 
 # Summarise the workout type of the day.
 workout_by_day <-
-  workout_by_day %>% summarise(day_workout_type = min(ride_type)) %>% mutate(did_workout =
+  workout_by_day %>% group_by(date) %>% summarise(day_workout_type = min(ride_type)) %>% mutate(did_workout =
                                                                                1)
 
 #merge workout info summary with calendar, left join to preserve all calendar days (all.x=TRUE)
@@ -187,7 +187,7 @@ ggplot(cal_workout) +
   labs(
     y = "",
     x = "",
-    title = 'My Cycling in 2022',
+    title = 'My Cycling in 2023',
     subtitle = subtitle,
     caption = "Data from Strava API | Chart by @jorgeml, original work by @tanya_shapiro"
   ) +
